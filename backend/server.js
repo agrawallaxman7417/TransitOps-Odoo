@@ -12,6 +12,13 @@ require("dotenv").config();
 
 const authRoutes = require("./routes/authRoutes");
 const tripRoutes = require("./routes/tripRoutes");
+const vehicleRoutes = require("./routes/vehicleRoutes");
+const driverRoutes = require("./routes/driverRoutes");
+const maintenanceRoutes = require("./routes/maintenanceRoutes");
+const expenseRoutes = require("./routes/expenseRoutes");
+const analyticsRoutes = require("./routes/analyticsRoutes");
+const settingsRoutes = require("./routes/settingsRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
 const errorHandler = require("./middleware/errorHandler"); // FN-CORE-01
 
 const app = express();
@@ -21,10 +28,15 @@ app.use(express.json());
 // --- Screen 0: Authentication (no verifyToken needed on these) ---
 app.use("/api/auth", authRoutes);
 
-// --- Screen 4: Trip Dispatcher ---
-// TODO: add verifyToken + requireRole(["Dispatcher"]) once frontend
-// is passing the JWT on every request (see middleware/checkRole.js)
+// --- Protected Routes ---
 app.use("/api/trips", tripRoutes);
+app.use("/api/vehicles", vehicleRoutes);
+app.use("/api/drivers", driverRoutes);
+app.use("/api/maintenance", maintenanceRoutes);
+app.use("/api/expenses", expenseRoutes);
+app.use("/api/analytics", analyticsRoutes);
+app.use("/api/settings", settingsRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 // Central error handler — MUST be last, after all routes.
 app.use(errorHandler);

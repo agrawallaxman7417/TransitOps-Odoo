@@ -7,6 +7,7 @@
 
 const express = require("express");
 const router = express.Router();
+const { verifyToken, requireRole } = require("../middleware/checkRole");
 const {
   createTrip,
   listTrips,
@@ -15,11 +16,12 @@ const {
   cancelTrip,
 } = require("../controllers/tripController");
 
-// Screen 8 RBAC matrix: Dispatcher has full (✓) access to Trips
-router.post("/", createTrip); // FN-TRP-01
-router.get("/", listTrips); // FN-TRP-02
-router.post("/:tripId/dispatch", dispatchTrip); // FN-TRP-03
-router.post("/:tripId/complete", completeTrip); // FN-TRP-04
-router.post("/:tripId/cancel", cancelTrip); // FN-TRP-05
+// Screen 8 RBAC matrix: 
+// Dispatcher has full (✓) access. Safety Officer has read-only (view) access to live board.
+router.get("/", verifyToken, requireRole(["Dispatcher", "Safety Officer"]), listTrips); // FN-TRP-02
+router.post("/", verifyToken, requireRole(["Dispatcher"]), createTrip); // FN-TRP-01
+router.post("/:tripId/dispatch", verifyToken, requireRole(["Dispatcher"]), dispatchTrip); // FN-TRP-03
+router.post("/:tripId/complete", verifyToken, requireRole(["Dispatcher"]), completeTrip); // FN-TRP-04
+router.post("/:tripId/cancel", verifyToken, requireRole(["Dispatcher"]), cancelTrip); // FN-TRP-05
 
 module.exports = router;
